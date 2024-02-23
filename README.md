@@ -1,5 +1,6 @@
 # multiFidelityNN
 
+## Part 1: Project Description
 Recently, predictive modeling has been drawing significant interest in various applications, particularly in scenarios where time-critical decisions are essential. A compelling issue in this context is to predict quantities of interest accurately when the application is intertwined with time-critical decision. Accurate prediction of specific properties require real data (a.k.a. high-fidelity data) however such physical data can be expensive, sensitive, and extremely time-consuming. A smart approach to this issue is to generate or take advantage of a giant chunk of simulated/cheap data (low-fidelity data), take a couple few of the high-fidelity data, and train the combination of both high and low-fidelity data (prevalentely known as multi-fidelity data) with a neural network. The major benefit of such multi-fidelity data aggregation using neural networks is that it significantly reduces the cost and the time of computational experiments. For this project, we propose to reproduce this idea with appropriate neural networks and examine this through multiple cases which incorporate interesting physical problems. Specifically, for this project, we will be using data generated from reaction diffusion equations (used frequently in modeling diffusion of particles or handling reactions between particles) and feed the data into our neural network system to predict the quantity of interest at any coefficient combination in a specific region accurately. 
 
 The general process of our project proceeds as follows:
@@ -17,3 +18,11 @@ Prior to applying the neural network to the main dataset, we examine our archite
 Finally, we feed our neural network architecture our prepared data and measure the MSE of: (1) low-fidelity function, (2) high-fidelity function, (3) the real data (high-fidelity model) against the validation data set.
 
 In summary, this project involves a systematic approach to leverage multi-fidelity data aggregation using neural networks for predicting quantities of interest; specifically, data generated from reaction diffusion equations. The application of this methodology to reaction-diffusion equations provides a practical and illustrative context for exploring the capabilities and benefits of this approach in real-world scenarios such as in understanding spatial patterns in dynamic systems utilizing a combination of mathematical framework and a fine neural network architecture.
+
+## Part 2: Datasets
+
+source (download link and associated paper(s) offering the dataset(s))
+differences between the train and validation subsets, which you think are important from your project point of view
+number of distinct objects/subjects represented in the data, number of samples per object/subject (if applies)
+brief characterization of samples: resolution, sensors used, ambient conditions, sampling frequency for audio, etc. (whichever applies)
+attach a few data samples (if possible) to your report to illustrate what type of data goes to each subset.
