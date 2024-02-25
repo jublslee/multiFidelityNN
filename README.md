@@ -54,6 +54,8 @@ With respect to the problem set, we generate two predictors using functionalitie
 
 Note that there might be slight modification of the specific domain size due to computational cost throughout the project application.
 
+As for the test, training, and validation data sets, we randomly split the generated data as the generated data is just simply simulated data. Specifically, the current test and training data set on the repository is split by 50:50 of the sampled data. Including the validation data set, we start with initial split ratio: (60:20:20 = training:validation:testing) and make modifications as we proceed with the project.
+
 [Source]
 
 [1] arXiv:1903.00104 [physics.comp-ph]
