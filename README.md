@@ -31,5 +31,12 @@ attach a few data samples (if possible) to your report to illustrate what type o
 For our simple example case, explained as above from step (c), we approximate a one-dimensional function based on data from high and low fidelities. 
 Each level of fidelities are generated from the following functions:
 $y_L(x) = A(6x-2)^2sin(12x-4) + B(x-0.5) + C, x \in [0,1]$
-$y_H(x) = (6x-2)^2sin(12x-4)$
-where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity data
+
+$y_H(x) = (6x-2)^2sin(12x-4)$ <br>
+where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity data (true function). In addition, we let A = 0.5, B = 10, and C = -5. Note that the training data at the low- and high-fidelity level are respectively $x_L = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1}$ and $x_H = {0, 0.4, 0.6, 1}$. We test our neural network's functional by first using only the high-fidelity data generated from $y_H(x)$ and comparing it with the one feeding low-fidelity data generated from $y_L(x)$ to ensure that our neural network successfully predicts the true function when multi-fidelity data are fed.
+
+As per the project design description, our initial proposal of the neural network architecture includes layers 
+
+[Source]
+
+[1] arXiv:1903.00104 [physics.comp-ph]s
