@@ -40,10 +40,13 @@ our reaction diffusion application problem to derive and predict the solution of
 $\partial_t u = D_u \partial_{xx}u + D_u \partial_{yy}u + R_u$ <br>
 $\partial_t v = D_v \partial_{xx}v + D_v \partial_{yy}v + R_v$ <br>
 where $u = u(t,x,y)$ is the activator and $v = v(t,x,y)$ is the inhibitor. Note that activator and inhibitor is simply two types of chemical components involved in our system which is generally used to explain pattern formation dynamics or various spatial structures. To be more detailed, activator promotes production of others and itself so it is likely to have positive influence on reaction terms where on the other hand, invibitors suppresses production of itself and others so is likely to have negative influence on the reaction terms. So, the interaction between the activator and inhibitor stimulates unique spatial patterns and structures. Accordingly, $R_u = R_u(u,v)$ and $R_v = R_v(u,v)$ are respectively the activator and inhibitor reaction function. <br>
-Furthermore, for the boundary conditions, we consider a no-flow Neumann boundary condition (i.e. $D_u \partial_{x}u = 0, D_v \partial_{x}v = 0, D_u \partial_{y}u = 0, D_v \partial_{y}v = 0$) and uncertain initial condition $u(0,x,y),v(0,x,y) ~ N(0,1) \forall x,y$ where $D_u$ and $D_v$ are the corresponding diffusion coefficients. For our reaction functions, Fitzhugh-Nagoumo equations are used: <br>
+Furthermore, for the boundary conditions, we consider a no-flow Neumann boundary condition (i.e. $D_u \partial_{x}u = 0, D_v \partial_{x}v = 0, D_u \partial_{y}u = 0, D_v \partial_{y}v = 0$) where Neumann boundary condition is simply a certain type of boundary condition used in PDEs and by no-flow, this generally infers that there is no net flow across the boundary (i.e. zero net movement of the substance across the boundary). <br>
+Also, we consider uncertain initial condition $u(0,x,y),v(0,x,y) ~ N(0,1) \forall x,y$ where $D_u$ and $D_v$ are the corresponding diffusion coefficients. <br>
+For our reaction functions, Fitzhugh-Nagoumo equations are used: <br>
 $R_u(u,v) = u - u^3 - k - v$ <br>
 $R_v(u,v) = u - v$ <br>
-where $k = 5*10^{-3}$.
+where $k = 5*10^{-3}$. <br>
+This particular set of equations exhibit interaction of variables with different excitement levels and can express and display the transition between resting and excited states under certain conditions.
 
 Specifically, we are interest in predicting a scalar value of the mean concentration as a function of the diffusion coefficients $D_{u}$ and $D_{v}$ where the scalar value represents the mean concentration of our inhibitor u in the region [0,1]x[-1,0] at t = 1. 
 
