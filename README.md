@@ -26,3 +26,10 @@ differences between the train and validation subsets, which you think are import
 number of distinct objects/subjects represented in the data, number of samples per object/subject (if applies)
 brief characterization of samples: resolution, sensors used, ambient conditions, sampling frequency for audio, etc. (whichever applies)
 attach a few data samples (if possible) to your report to illustrate what type of data goes to each subset.
+
+
+For our simple example case, explained as above from step (c), we approximate a one-dimensional function based on data from high and low fidelities. 
+Each level of fidelities are generated from the following functions:
+$y_L(x) = A(6x-2)^2sin(12x-4) + B(x-0.5) + C, x \in [0,1]$
+$y_H(x) = (6x-2)^2sin(12x-4)$
+where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity data
