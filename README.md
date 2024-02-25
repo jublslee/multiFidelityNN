@@ -28,12 +28,17 @@ brief characterization of samples: resolution, sensors used, ambient conditions,
 attach a few data samples (if possible) to your report to illustrate what type of data goes to each subset.
 
 
-For our simple example case, explained as above from step (c), we approximate a one-dimensional function based on data from high and low fidelities. 
-Each level of fidelities are generated from the following functions:
-$y_L(x) = A(6x-2)^2sin(12x-4) + B(x-0.5) + C, x \in [0,1]$
-
+For our simple example case, explained as above from step (c), we approximate a one-dimensional function based on data from high and low fidelities where function is continuous and both level of fidelity generator functions are linearly correlated. 
+Each level of fidelities are generated from the following functions: <br>
+$y_L(x) = A(6x-2)^2sin(12x-4) + B(x-0.5) + C, x \in [0,1]$ <br>
 $y_H(x) = (6x-2)^2sin(12x-4)$ <br>
-where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity data (true function). In addition, we let A = 0.5, B = 10, and C = -5. Note that the training data at the low- and high-fidelity level are respectively $x_L = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1}$ and $x_H = {0, 0.4, 0.6, 1}$. We test our neural network's functional by first using only the high-fidelity data generated from $y_H(x)$ and comparing it with the one feeding low-fidelity data generated from $y_L(x)$ to ensure that our neural network successfully predicts the true function when multi-fidelity data are fed.
+where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity data (true function). In addition, we let A = 0.5, B = 10, and C = -5. Note that the training data at the low- and high-fidelity level are respectively $x_L = $ {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1} and $x_H = $ {0, 0.4, 0.6, 1}. <br>
+We test our neural network's functional by first using only the high-fidelity data generated from $y_H(x)$ and comparing it with the one feeding low-fidelity data generated from $y_L(x)$ to ensure that our neural network successfully predicts the true function when multi-fidelity data are fed. Note that when only using high-fidelity data, we only will need to keeps the layers of the network where high-fidelity data are processed. 
+
+In addition, we test if the model can capture complex nonlinear correlations between low and high fidelity generator functions. The corresponding functions are the following:<br>
+$y_L(x) = sin(8\pi x), x \in [0,1]$ <br>
+$y_H(x) = (x-\sqrt{2})y_L^2$ <br>
+
 
 As per the project design description, our initial proposal of the neural network architecture includes layers 
 
