@@ -43,11 +43,16 @@ where u (=$u(t,x,y)$) is the activator and v (=$v(t,x,y)$) is the inhibitor. Not
 Furthermore, for the boundary conditions, we consider a no-flow Neumann boundary condition (i.e. $D_u \partial_{x}u = 0, D_v \partial_{x}v = 0, D_u \partial_{y}u = 0, D_v \partial_{y}v = 0$) and uncertain initial condition $u(0,x,y),v(0,x,y) ~ N(0,1) \forall x,y$ where $D_u$ and $D_v$ are the corresponding diffusion coefficients. For our reaction functions, Fitzhugh-Nagoumo equations are used: <br>
 $R_u(u,v) = u - u^3 - k - v$ <br>
 $R_v(u,v) = u - v$ <br>
-where $k = 5*10^(-3)$.
+where $k = 5*10^{-3}$.
 
 Specifically, we are interest in predicting a scalar value of the mean concentration as a function of the diffusion coefficients $D_{u}$ and $D_{v}$ where the scalar value represents the mean concentration of our inhibitor u in the region [0,1]x[-1,0] at t = 1. 
+
+With respect to the problem set, we generate two predictors using functionalities from the PDEBench library[2], where the modified code is attached to this repository, which are each the high-fidelity predictor using a discretized domain of size 128x128 and the low-fidelity predictor using a 64x64 spatial mesh.
+
+Note that there might be slight modification of the specific domain size due to computational cost throughout the project application.
+
 [Source]
 
 [1] arXiv:1903.00104 [physics.comp-ph]
 
-[2]
+[2] https://github.com/pdebench/PDEBench
