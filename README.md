@@ -35,8 +35,19 @@ where we plan to employ uniformly distributed 51 points to generate low fidelity
 
 Note that if our neural network successfully works on the two simple example cases in a short amount of time, we plan to test functionality through inverse PDE problems with nonlinearities (IF we are ahead of time). 
 
-As per the project design description, our initial proposal of the neural network architecture includes layers 
+Once we finish confirming the functional of our neural network, we proceed to 
+our reaction diffusion application problem to derive and predict the solution of the reaction-diffusion PDE. In this case, we consider the 2D reaction-diffusion equation satisfying a PDE in the form as the following: <br>
+$\partial_t u = D_u \partial_{xx}u + D_u \partial_{yy}u + R_u$ <br>
+$\partial_t v = D_v \partial_{xx}v + D_v \partial_{yy}v + R_v$ <br>
+where u (=$u(t,x,y)$) is the activator and v (=$v(t,x,y)$) is the inhibitor. Note that activator and inhibitor is simply two types of chemical components involved in our system which is generally used to explain pattern formation dynamics or various spatial structures. To be more detailed, activator promotes production of others and itself so it is likely to have positive influence on reaction terms where on the other hand, invibitors suppresses production of itself and others so is likely to have negative influence on the reaction terms. So, the interaction between the activator and inhibitor stimulates unique spatial patterns and structures. Accordingly, $R_u = R_u(u,v)$ and $R_v = R_v(u,v)$ are respectively the activator and inhibitor reaction function. <br>
+Furthermore, for the boundary conditions, we consider a no-flow Neumann boundary condition (i.e. $D_u \partial_{x}u = 0, D_v \partial_{x}v = 0, D_u \partial_{y}u = 0, D_v \partial_{y}v = 0$) and uncertain initial condition $u(0,x,y),v(0,x,y) ~ N(0,1) \forall x,y$ where $D_u$ and $D_v$ are the corresponding diffusion coefficients. For our reaction functions, Fitzhugh-Nagoumo equations are used: <br>
+$R_u(u,v) = u - u^3 - k - v$ <br>
+$R_v(u,v) = u - v$ <br>
+where $k = 5*10^(-3)$.
 
+Specifically, we are interest in predicting a scalar value of the mean concentration as a function of the diffusion coefficients $D_{u}$ and $D_{v}$ where the scalar value represents the mean concentration of our inhibitor u in the region [0,1]x[-1,0] at t = 1. 
 [Source]
 
-[1] arXiv:1903.00104 [physics.comp-ph]s
+[1] arXiv:1903.00104 [physics.comp-ph]
+
+[2]
