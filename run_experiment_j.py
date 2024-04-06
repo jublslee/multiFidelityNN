@@ -55,7 +55,8 @@ hidden_dim = 20                         # number of hidden neurons
 output_dim = 4                          # number of output neurons
 layers = [64,64]
 device = 'cpu'                          # use CPU 
-activations = 'ReLU'
+activations = 'Tanh'
+# activations = 'ReLU'
 init_type = 'Xavier normal'
 # batch_size = 256                        # specify batch size
 
@@ -78,13 +79,13 @@ epochs = 50             # specify number of epochs
 learning_rate = 0.01    # specify learning rate
 
 # loss function
+## MSE for NN_L
+def MSE_yL(y, y_star):
+    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
+
+## MSE for NN_H
 def MSE_yH(y, y_star):
-    return torch.mean(torch.square(torch.sub(y,y_star)))
-
-
-# derivative function of MSE (outputs vector of d_cost/d_y)
-def MSE_prime(y, y_star):
-    return torch.mul(torch.sub(y,y_star),2)
+    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
 
 acc_best = 0.0
 training_loss = []
@@ -127,7 +128,8 @@ for epoch in range(epochs):
     # Perform a single optimization step (weights update)
     # Define a loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = optim.Adam(mlp_H_nl.parameters(), lr=0.001)
+    optimizer = optim.SGD(mlp_H_nl.parameters(), lr=0.01, momentum=0.9)
+    # optimizer = optim.Adam(mlp_H_nl.parameters(), lr=0.001)
 
     # Forward pass
     #loss = criterion(y, y_star)
@@ -151,4 +153,3 @@ for epoch in range(epochs):
 
     # if (epoch+1) % 5 == 0: <- use this if you want to print the validation accuracy every 5 epochs
     # print(f"Epoch: #{epoch+1}: validation accuracy = {acc*100:.2f}%; training loss = {torch.mean(torch.tensor(training_loss))}")
-
