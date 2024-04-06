@@ -38,18 +38,25 @@ def evaluate(model, loader):
     acc = sum(res_store)/len(res_store)
     return acc
 
-# Specify Network-related hyper-parameters 
-# data_path = "./simpleDataGen/highData.txt"             # specify location of data
+def dataConvert(dataPath):
+    with open(dataPath, 'r') as file:
+        dat = file.read()
+    # Split the content into a list of elements separated by comma
+    datVec = dat.split(',')
+    return datVec
 
-with open('./simpleDataGen/highData.txt', 'r') as file:
-    high = file.read()
-# Split the content into a list of elements separated by comma
-highFid = high.split(',')
+highFid = dataConvert('./simpleDataGen/highData.txt')
+lowFid = dataConvert('./simpleDataGen/lowData.txt')
 
-with open('./simpleDataGen/lowData.txt', 'r') as file:
-    low = file.read()
-# Split the content into a list of elements separated by comma
-lowFid = low.split(',')
+# with open('./simpleDataGen/highData.txt', 'r') as file:
+#     high = file.read()
+# # Split the content into a list of elements separated by comma
+# highFid = high.split(',')
+
+# with open('./simpleDataGen/lowData.txt', 'r') as file:
+#     low = file.read()
+# # Split the content into a list of elements separated by comma
+# lowFid = low.split(',')
 
 # Convert elements to integers (or floats if needed)
 data_H = [float(highFid_i) for highFid_i in highFid]
@@ -129,7 +136,7 @@ for epoch in range(epochs):
 
     # Backward pass and optimize
     optimizer.zero_grad()
-    loss_L.backward()
+    loss_L.backward(retain_graph=True)
     optimizer.step()
     if (epoch+1) % 5 == 0:
         print("Loss:", loss_L.item())
@@ -138,8 +145,10 @@ for epoch in range(epochs):
 
 print(y_L)
 
+###### NN_H
+
 epochs = 30             # specify number of epochs
-input_dim = 4                           # equal to number of
+input_dim = 15                           # equal to number of
 hidden_dim = 20                         # number of hidden neurons
 output_dim = 4                          # number of output neurons
 layers = [64,64]
@@ -149,6 +158,12 @@ activations = 'Tanh'
 init_type = 'Xavier normal'
 # batch_size = 256                        # specify batch size
 mlp_H_nl = MLP(input_dim, output_dim, layers, activations, init_type)
+
+x = [0,0.4,0.6,1]
+x = torch.Tensor(x)
+x = torch.t(x)
+x_H = torch.cat((x, y_L), dim=0)
+y_star = torch.t(data_H)
 
 # Run training 
 for epoch in range(epochs):
@@ -167,14 +182,6 @@ for epoch in range(epochs):
 
         # # Perform a single optimization step (weights update)
         # mlp.backward(x,d_cost_d_y,y,learning_rate)
-    x_L = [i / 10 for i in range(11)]
-    x_H = [0,0.4,0.6,1]
-    x_H = torch.Tensor(x_H)
-    # print(x_H.size())
-    x_H = torch.t(x_H)
-    # print(x_H.size())
-    y_star = torch.t(data_H)
-    # print(y_star.size())
 
     y = mlp_H_nl(x_H)
     # print(y.size())
@@ -187,7 +194,7 @@ for epoch in range(epochs):
 
     # Perform a single optimization step (weights update)
     # Define a loss function and optimizer
-    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(mlp_H_nl.parameters(), lr=0.01, momentum=0.9)
     # optimizer = optim.Adam(mlp_H_nl.parameters(), lr=0.001)
 
@@ -196,11 +203,11 @@ for epoch in range(epochs):
     loss = MSE_yH(y, y_star)
 
     # Backward pass and optimize
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-    if (epoch+1) % 5 == 0:
-        print("Loss:", loss.item())
+    # optimizer.zero_grad()
+    # loss.backward()
+    # optimizer.step()
+    # if (epoch+1) % 5 == 0:
+    #     print("Loss:", loss.item())
 
     # Evaluate the model
     # acc = evaluate(mlp, val_dataloader)
