@@ -46,13 +46,22 @@ with open('./simpleDataGen/highData.txt', 'r') as file:
 # Split the content into a list of elements separated by comma
 highFid = high.split(',')
 
-# Convert elements to integers (or floats if needed)
-data = [float(highFid_i) for highFid_i in highFid]
-data = torch.Tensor(data)
+with open('./simpleDataGen/lowData.txt', 'r') as file:
+    low = file.read()
+# Split the content into a list of elements separated by comma
+lowFid = low.split(',')
 
-input_dim = 4                           # equal to number of
-hidden_dim = 20                         # number of hidden neurons
-output_dim = 4                          # number of output neurons
+# Convert elements to integers (or floats if needed)
+data_H = [float(highFid_i) for highFid_i in highFid]
+data_H = torch.Tensor(data_H)
+print(data_H)
+
+data_L = [float(lowFid_i) for lowFid_i in lowFid]
+data_L = torch.Tensor(data_L) 
+print(data_L)
+
+input_dim = 11                           # equal to number of
+output_dim = 11                          # number of output neurons
 layers = [64,64]
 device = 'cpu'                          # use CPU 
 activations = 'Tanh'
@@ -60,13 +69,13 @@ activations = 'Tanh'
 init_type = 'Xavier normal'
 # batch_size = 256                        # specify batch size
 
-mlp_H_nl = MLP(input_dim, output_dim, layers, activations, init_type)
+mlp_L = MLP(input_dim, output_dim, layers, activations, init_type)
 
 # Split the data into training set, validation set and test set
 train_set_size = 0.6
 val_set_size = 0.2
 test_set_size = 0.2
-train_set, val_set, test_set = torch.utils.data.random_split(data,[train_set_size,val_set_size,test_set_size])
+train_set, val_set, test_set = torch.utils.data.random_split(data_H,[train_set_size,val_set_size,test_set_size])
 
 # Wrap the dataset into Pytorch dataloader to pass samples in "minibatches"
 # train_dataloader = DataLoader(train_set, batch_size=batch_size, shuffle=True, drop_last=False)
@@ -79,6 +88,10 @@ epochs = 50             # specify number of epochs
 learning_rate = 0.01    # specify learning rate
 
 # loss function
+## MSE
+def MSE(y, y_star):
+    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
+
 ## MSE for NN_L
 def MSE_yL(y, y_star):
     return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
@@ -89,6 +102,53 @@ def MSE_yH(y, y_star):
 
 acc_best = 0.0
 training_loss = []
+
+y_L = 0
+
+# Run training 
+for epoch in range(epochs):
+    mlp_L.train()
+    print(f"epoch:{epoch}")
+
+    x_L = [i / 10 for i in range(11)]
+    x_L = torch.Tensor(x_L)
+    y_star = torch.t(data_L)
+
+    y = mlp_L(x_L)
+
+    # Perform a single optimization step (weights update)
+    # Define a loss function and optimizer
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = optim.SGD(mlp_L.parameters(), lr=0.01, momentum=0.9)
+    # optimizer = optim.Adam(mlp_H_nl.parameters(), lr=0.001)
+
+    # Forward pass
+    loss_L = MSE(y,y_star) # loss calculation for low fidelity network
+    # loss_L = MSE_yH(y,y_star) # loss calculation for low fidelity network
+    # training_loss.append(loss_L)
+
+    # Backward pass and optimize
+    optimizer.zero_grad()
+    loss_L.backward()
+    optimizer.step()
+    if (epoch+1) % 5 == 0:
+        print("Loss:", loss_L.item())
+
+    y_L = y
+
+print(y_L)
+
+epochs = 30             # specify number of epochs
+input_dim = 4                           # equal to number of
+hidden_dim = 20                         # number of hidden neurons
+output_dim = 4                          # number of output neurons
+layers = [64,64]
+device = 'cpu'                          # use CPU 
+activations = 'Tanh'
+# activations = 'ReLU'
+init_type = 'Xavier normal'
+# batch_size = 256                        # specify batch size
+mlp_H_nl = MLP(input_dim, output_dim, layers, activations, init_type)
 
 # Run training 
 for epoch in range(epochs):
@@ -107,19 +167,19 @@ for epoch in range(epochs):
 
         # # Perform a single optimization step (weights update)
         # mlp.backward(x,d_cost_d_y,y,learning_rate)
-    
+    x_L = [i / 10 for i in range(11)]
     x_H = [0,0.4,0.6,1]
     x_H = torch.Tensor(x_H)
     # print(x_H.size())
     x_H = torch.t(x_H)
     # print(x_H.size())
-    y_star = torch.t(data)
+    y_star = torch.t(data_H)
     # print(y_star.size())
 
     y = mlp_H_nl(x_H)
     # print(y.size())
     cost = MSE_yH(y,y_star) # Calculate cost
-    d_cost_d_y = MSE_prime(y,y_star)
+    # d_cost_d_y = MSE_prime(y,y_star)
 
     # total cost <- cost 1 + cost 2 
 
