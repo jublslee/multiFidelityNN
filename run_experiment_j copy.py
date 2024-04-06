@@ -1,4 +1,3 @@
-######### Import Packages #########
 import torch
 import torchvision
 import torch.nn as nn
@@ -11,17 +10,34 @@ import torch.optim as optim
 from torchvision.transforms import ToTensor
 from torchvision.io import read_image
 from mlp import *
+# from mlp_d import *
 
 # Seed the random number generator for all devices (both CPU and CUDA)
 torch.manual_seed(0)
 
-#################################################################################
+# evaluates the trained model
+def evaluate(model, loader):
 
-######### Define functions #########
-#### dataConvert: converts data to vector from txt file ####
-## @param dataPath
-##        path to data
-## @return data converted to vector 
+    # we need to switch the model into the evaluation mode
+    model.eval()
+
+    # create a list to store the prediction results
+    res_store = []
+    for batch in loader:
+        x, y = batch
+
+        # make a prediction for a data sample "x"
+        pred = model(x)
+        pred = (pred > 0.5).float().squeeze(1)
+        y = y.squeeze(1)
+
+        # if the prediction is correct, append True; else append False
+        res_store += (pred == y).tolist()
+
+    # return the classification accuracy
+    acc = sum(res_store)/len(res_store)
+    return acc
+
 def dataConvert(dataPath):
     with open(dataPath, 'r') as file:
         dat = file.read()
@@ -29,31 +45,28 @@ def dataConvert(dataPath):
     datVec = dat.split(',')
     return datVec
 
-### MSE: loss function ####
-## @param y 
-##        output value of MLP network
-## @param y_star
-##        actual y value
-## @return output of MSE function
-def MSE(y, y_star):
-    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
-
-
-
-#################################################################################
-
 highFid = dataConvert('./simpleDataGen/highData.txt')
 lowFid = dataConvert('./simpleDataGen/lowData.txt')
+
+# with open('./simpleDataGen/highData.txt', 'r') as file:
+#     high = file.read()
+# # Split the content into a list of elements separated by comma
+# highFid = high.split(',')
+
+# with open('./simpleDataGen/lowData.txt', 'r') as file:
+#     low = file.read()
+# # Split the content into a list of elements separated by comma
+# lowFid = low.split(',')
 
 # Convert elements to integers (or floats if needed)
 data_H = [float(highFid_i) for highFid_i in highFid]
 data_H = torch.Tensor(data_H)
+print(data_H)
 
 data_L = [float(lowFid_i) for lowFid_i in lowFid]
 data_L = torch.Tensor(data_L) 
+print(data_L)
 
-
-### Training
 input_dim = 11                           # equal to number of
 output_dim = 11                          # number of output neurons
 layers = [64,64]
@@ -81,6 +94,22 @@ save = "best_model"
 epochs = 50             # specify number of epochs
 learning_rate = 0.01    # specify learning rate
 
+# loss function
+## MSE
+def MSE(y, y_star):
+    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
+
+## MSE for NN_L
+def MSE_yL(y, y_star):
+    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
+
+## MSE for NN_H
+def MSE_yH(y, y_star):
+    return torch.mean(torch.square(torch.abs(torch.sub(y,y_star))))
+
+acc_best = 0.0
+training_loss = []
+
 y_L = 0
 
 # Run training 
@@ -107,8 +136,7 @@ for epoch in range(epochs):
 
     # Backward pass and optimize
     optimizer.zero_grad()
-    #loss_L.backward(retain_graph=True)
-    loss_L.backward()
+    loss_L.backward(retain_graph=True)
     optimizer.step()
     if (epoch+1) % 5 == 0:
         print("Loss:", loss_L.item())
@@ -142,14 +170,27 @@ for epoch in range(epochs):
     mlp_H_nl.train()
     print(f"epoch:{epoch}")
 
+    # Iterate batches in dataloader
+    # for batch in train_dataloader:
+        # x, y_star = batch
+
+        # y = mlp(x)
+        # cost = MSE(y,y_star) # Calculate cost
+        # d_cost_d_y = MSE_prime(y,y_star)
+
+        # training_loss.append(cost)
+
+        # # Perform a single optimization step (weights update)
+        # mlp.backward(x,d_cost_d_y,y,learning_rate)
+
     y = mlp_H_nl(x_H)
     # print(y.size())
-    cost = MSE(y,y_star) # Calculate cost
+    cost = MSE_yH(y,y_star) # Calculate cost
     # d_cost_d_y = MSE_prime(y,y_star)
 
     # total cost <- cost 1 + cost 2 
 
-    # training_loss.append(cost)
+    training_loss.append(cost)
 
     # Perform a single optimization step (weights update)
     # Define a loss function and optimizer
@@ -159,7 +200,7 @@ for epoch in range(epochs):
 
     # Forward pass
     #loss = criterion(y, y_star)
-    loss = MSE(y, y_star)
+    loss = MSE_yH(y, y_star)
 
     # Backward pass and optimize
     # optimizer.zero_grad()
@@ -167,3 +208,15 @@ for epoch in range(epochs):
     # optimizer.step()
     # if (epoch+1) % 5 == 0:
     #     print("Loss:", loss.item())
+
+    # Evaluate the model
+    # acc = evaluate(mlp, val_dataloader)
+    # acc = evaluate(mlp_H_nl, data)
+
+    # # Save the current weights if the accuracy is better in this iteration
+    # if acc > acc_best and save:
+    #     torch.save(mlp_H_nl.W1, save + "_W1")
+    #     torch.save(mlp_H_nl.W2, save + "_W2")
+
+    # if (epoch+1) % 5 == 0: <- use this if you want to print the validation accuracy every 5 epochs
+    # print(f"Epoch: #{epoch+1}: validation accuracy = {acc*100:.2f}%; training loss = {torch.mean(torch.tensor(training_loss))}")
