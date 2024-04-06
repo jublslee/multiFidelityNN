@@ -74,11 +74,11 @@ train_set, val_set, test_set = torch.utils.data.random_split(data,[train_set_siz
 
 # Specify Training-Related hyper params
 save = "best_model"
-epochs = 10             # specify number of epochs
+epochs = 50             # specify number of epochs
 learning_rate = 0.01    # specify learning rate
 
 # loss function
-def MSE(y, y_star):
+def MSE_yH(y, y_star):
     return torch.mean(torch.square(torch.sub(y,y_star)))
 
 
@@ -109,15 +109,15 @@ for epoch in range(epochs):
     
     x_H = [0,0.4,0.6,1]
     x_H = torch.Tensor(x_H)
-    print(x_H.size())
+    # print(x_H.size())
     x_H = torch.t(x_H)
-    print(x_H.size())
+    # print(x_H.size())
     y_star = torch.t(data)
-    print(y_star.size())
+    # print(y_star.size())
 
     y = mlp_H_nl(x_H)
-    print(y.size())
-    cost = MSE(y,y_star) # Calculate cost
+    # print(y.size())
+    cost = MSE_yH(y,y_star) # Calculate cost
     d_cost_d_y = MSE_prime(y,y_star)
 
     # total cost <- cost 1 + cost 2 
@@ -130,14 +130,15 @@ for epoch in range(epochs):
     optimizer = optim.Adam(mlp_H_nl.parameters(), lr=0.001)
 
     # Forward pass
-    loss = criterion(y, y_star)
+    #loss = criterion(y, y_star)
+    loss = MSE_yH(y, y_star)
 
     # Backward pass and optimize
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-
-    print("Loss:", loss.item())
+    if (epoch+1) % 5 == 0:
+        print("Loss:", loss.item())
 
     # Evaluate the model
     # acc = evaluate(mlp, val_dataloader)
