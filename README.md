@@ -61,3 +61,26 @@ As for the test, training, and validation data sets, we randomly split the gener
 [1] arXiv:1903.00104 [physics.comp-ph]
 
 [2] https://github.com/pdebench/PDEBench
+
+
+## Part 3: First solution 
+
+Our first solution of the neural network project includes the implementation of the simple example case [1] explained from part 2. To reiterate, in our approach, we aim to construct an approximation of a one-dimensional function that exhibits continuity, leveraging datasets characterized by both high and low fidelity levels. The underlying principle guiding this approximation is predicated on the observation that the generators of both fidelity levels share a linear correlation, allowing for a more nuanced understanding and modeling of the function based on data spanning the spectrum from low to high fidelity.
+
+(1) Justification of neural network architecture
+The neural network architecture we have developed incorporates several Multi-Layer Perceptron (MLP) neural networks, each functioning in concert within the overarching framework. This composition enables our architecture to leverage the distinct advantages and capabilities of multiple MLPs, working synergistically to achieve more complex and nuanced data processing and analysis tasks than would be possible with a single MLP network. Specifically, we plan to incorporate three MLP neural networks where each MLP neural network serves for different purposes.
+The first MLP neural network accepts low fidelity data and trains the low fidelity input data to predict the corresponding y value. Recall that in the beginning of this documentation, we articulated that we assume we have a bunch of low fidelity data and very few high fidelity data due to reduce high computational cost and time. Hence, the first MLP neural network is crucial since we want to ensure that we have a good output using the low fidelity input data before we feed the output to the network which trains the output and the high fidelity input data in order to yield our target result.
+Following this, the architecture introduces the second and third MLP neural networks, both of which are fed high fidelity input data alongside the output derived from the first MLP neural network. These networks are distinguished by their activation functions: the second employs a linear activation function, while the third opts for a non-linear activation function. This bifurcation is deliberate, designed to capture the potential linear or non-linear relationships that may exist between the low and high fidelity data sets. Initially, our strategy focuses on implementing and validating the functionality of two distinct MLP neural networks—specifically, the first network (dedicated to processing low fidelity data) and the third network (targeted at non-linear correlations with high fidelity data). This phased approach allows us to ensure that each component operates effectively before we proceed to integrate the entire proposed architecture.
+
+
+
+Note that each level of fidelities are generated from the following functions: <br>
+$y_L(x) = A(6x-2)^2sin(12x-4) + B(x-0.5) + C, x \in [0,1]$ <br>
+$y_H(x) = (6x-2)^2sin(12x-4)$ <br>
+where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity data (true function). In addition, we let A = 0.5, B = 10, and C = -5. Note that the training data at the low- and high-fidelity level are respectively $x_{L}$ = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1} and $x_{H}$ = {0, 0.4, 0.6, 1}. <br>
+
+(2) Observed accuracy of neural network architecture
+
+(3) Commentary related to the observed accuracy and ideas for improvements (to be implemented in the final solution)
+
+First of all, 
