@@ -70,9 +70,27 @@ Our first solution of the neural network project includes the implementation of 
 (1) Justification of neural network architecture
 The neural network architecture we have developed incorporates several Multi-Layer Perceptron (MLP) neural networks, each functioning in concert within the overarching framework. This composition enables our architecture to leverage the distinct advantages and capabilities of multiple MLPs, working synergistically to achieve more complex and nuanced data processing and analysis tasks than would be possible with a single MLP network. Specifically, we plan to incorporate three MLP neural networks where each MLP neural network serves for different purposes.
 The first MLP neural network accepts low fidelity data and trains the low fidelity input data to predict the corresponding y value. Recall that in the beginning of this documentation, we articulated that we assume we have a bunch of low fidelity data and very few high fidelity data due to reduce high computational cost and time. Hence, the first MLP neural network is crucial since we want to ensure that we have a good output using the low fidelity input data before we feed the output to the network which trains the output and the high fidelity input data in order to yield our target result.
+
+The details of our first MLP neural network is as follows:
+Number and type of layers: we use [64,64] for our layers and for the activation function we use tanh. 
+
+Weight: we use Xavier normal for the weight and bias when initializing our layers. 
+
+Loss function: we use MSE for the loss function where we square the absolute difference between the output y and the actual y value and take the mean
+
+Optimization algorithm: by comparing Adam and stochastic gradient descent (SGD) optimization algorithms, we confirmed that SGD outputs better accuracy so we pick SGD for the optimization algorithm
+
 Following this, the architecture introduces the second and third MLP neural networks, both of which are fed high fidelity input data alongside the output derived from the first MLP neural network. These networks are distinguished by their activation functions: the second employs a linear activation function, while the third opts for a non-linear activation function. This bifurcation is deliberate, designed to capture the potential linear or non-linear relationships that may exist between the low and high fidelity data sets. Initially, our strategy focuses on implementing and validating the functionality of two distinct MLP neural networks—specifically, the first network (dedicated to processing low fidelity data) and the third network (targeted at non-linear correlations with high fidelity data). This phased approach allows us to ensure that each component operates effectively before we proceed to integrate the entire proposed architecture.
 
+The details of our third MLP neural network is as follows:
 
+Number and type of layers: we use [64,64] for our layers and for the activation function we use tanh. 
+
+Weight: we use Xavier normal for the weight and bias when initializing our layers. 
+
+Loss function: we use MSE for the loss function where we square the absolute difference between the output y and the actual y value and take the mean
+
+Optimization algorithm: by comparing Adam and stochastic gradient descent (SGD) optimization algorithms, we confirmed that SGD outputs better accuracy so we pick SGD for the optimization algorithm
 
 Note that each level of fidelities are generated from the following functions: <br>
 $y_L(x) = A(6x-2)^2sin(12x-4) + B(x-0.5) + C, x \in [0,1]$ <br>
@@ -81,6 +99,12 @@ where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity dat
 
 (2) Observed accuracy of neural network architecture
 
+Running throughout epochs, notice that 
+
 (3) Commentary related to the observed accuracy and ideas for improvements (to be implemented in the final solution)
 
-First of all, 
+First of all, to extend to our final goal, we need to include the second neural network into our architecture
+
+Instead of placing distinct junk of code connecting two networks, need to figure out an efficient way to create a single model that incorporates all three MLP neural networks. One idea is to create a separate class to do so.
+
+Finally, to validate the accuracy, would need to work obtaining the residual error values. Also, a good way to display would be to plot the actual and the predicted value to see how good our network works.
