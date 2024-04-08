@@ -99,12 +99,17 @@ where y_L(x) generates low-fidelity data, and y_H(x) generates high-fidelity dat
 
 (2) Observed accuracy of neural network architecture
 
-Running throughout epochs, notice that 
+Running throughout epochs, notice that the loss value significantly decreases as the epoch increase.
+However, as we were trying to test with the validation and test data, the code fails. This is an issue we need to work on which is also re-addressed in the next paragraph.
+
 
 (3) Commentary related to the observed accuracy and ideas for improvements (to be implemented in the final solution)
 
-First of all, to extend to our final goal, we need to include the second neural network into our architecture
+There are a couple things that needs to be improved which are listed above:
 
-Instead of placing distinct junk of code connecting two networks, need to figure out an efficient way to create a single model that incorporates all three MLP neural networks. One idea is to create a separate class to do so.
+To move closer to our ultimate goal, it's essential to add the second neural network to our setup. This step is crucial to ensure our neural network architecture well captures the linear or non-linear relationship that exist between the low fidelity and the high fidelity equation. 
 
-Finally, to validate the accuracy, would need to work obtaining the residual error values. Also, a good way to display would be to plot the actual and the predicted value to see how good our network works.
+In addition, up until now, we've been stitching two networks together with separate pieces of code, but this isn't the most efficient approach. It's also not easy to read.
+What we need is a smoother way to combine all three MLP (Multi-Layer Perceptron) neural networks into a single, streamlined model. One good solution might be to design a separate class that can handle this task, making the whole system work as one unit. This is also crucial which is likely to resolve the issue where we failed to use our model to test with the validation and test data. By combining the MLP networks together to a singular model, we hope to efficiently test and use our model.
+
+Besides refining our model's structure, we also need to focus on how well it's performing. To do this, we'll look at the residual error values, which tell us how far off our predictions are from the actual values. But numbers alone might not give us the full picture. A great way to see our network's accuracy in action is by plotting both the actual values and our predicted values on a graph. This visual comparison can quickly show us how close our predictions are to reality, helping us understand our model's effectiveness at a glance.
