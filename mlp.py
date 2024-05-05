@@ -5,37 +5,22 @@ from deepNN import *
 
 #### MLP ####
 ## network with low-fidelity, linear & non-linear high-fidelity architecture
-## network introduced in Karniadakis paper
+## network (Karniadakis paper)
 class MLP(nn.Module):
     ### init: initialize ####
-    ## @param in_dim 
-    ##        input dimension (int)
-    ## @param out_dim
-    ##        output dimension (int)
-    ## @param hidden_param
-    ##        parameters for hidden layer [number of layers, number of neuron size]
-    ## @param add_bias 
-    ##        choice of adding bias 
-    ## @param activation
-    ##        type of activation function to use
+    ## @param lf_list 
+    ##        List of low-fidelity (LF) models
+    ## @param hf
+    ##        High-fidelity model
+    ## @param lf_nn_sizes
+    ##        number of neurons in LF
+    ## @param nl_nn_size 
+    ##        number of neurons in HF-non_linear
     def __init__(self,
                  lf_list: list,
                  hf,
                  lf_nn_sizes: set,
                  nl_nn_size: set):
-        """
-        Initialize neural network models
-
-        Parameters
-        ----------
-        model_list : list
-            Models part of multi-fidelity network.
-
-        
-        Returns
-        -------
-        Wrapper for multi-fidelity neural network.
-        """
         super().__init__()
 
         lf_num = len(lf_list)
@@ -107,11 +92,11 @@ def test_MLP():
     lf_list = [LF_MK1()]
 
     num_lf_models = len(lf_list)
-    lf_nn_sizes = [{ 'num_hidden_layers': 2, 'num_neurons': 10, }
+    lf_nn_sizes = [{ 'num_hidden_layers': 5, 'num_neurons': 25, }
                    for ii in range(num_lf_models)]
     nl_nn_size = {
-        'num_hidden_layers': 2,
-        'num_neurons': 10,
+        'num_hidden_layers': 5,
+        'num_neurons': 25,
     }
 
     mfnn = MLP(lf_list, HF_MK1(), lf_nn_sizes, nl_nn_size)
