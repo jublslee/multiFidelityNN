@@ -100,14 +100,11 @@ class MLP(nn.Module):
         
         return hf_l_pred + hf_nl_pred
 
-def test_MLP(model_case: str):
+def test_MLP():
     from exCases import HF_MK1, LF_MK1
 
-    # Define models
-    match model_case:
-        case 'mk1':
-            #model_list = [HF_MK1(), LF_MK1()]
-            lf_list = [LF_MK1()]
+    # Define models for LF
+    lf_list = [LF_MK1()]
 
     num_lf_models = len(lf_list)
     lf_nn_sizes = [{ 'num_hidden_layers': 2, 'num_neurons': 10, }
@@ -125,5 +122,5 @@ def test_MLP(model_case: str):
 
 # TESTING CLASS
 if __name__ == "__main__":
-    test_MLP('mk1')
+    test_MLP()
     
