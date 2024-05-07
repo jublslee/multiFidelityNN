@@ -1,12 +1,7 @@
 ######### Import Packages #########
 import torch
 import torch.nn as nn
-
-# 32 bit Floating Point
-# torch.set_default_dtype(torch.float)
-# 64 bit Floating Point
 torch.set_default_dtype(torch.double)
-
 # Seed the random number generator for all devices (both CPU and CUDA)
 torch.manual_seed(0)
 
@@ -28,10 +23,8 @@ class deepNN(nn.Module):
     ## @param activation
     ##        type of activation function to use
     def __init__(self, in_dim,
-                #  num_hidden_layers,
                  out_dim,
                  hidden_param,
-                #  num_neurons: int,
                  add_bias=True,
                  activation='Tanh'):
         
@@ -75,6 +68,7 @@ class deepNN(nn.Module):
             if isinstance(layer, nn.Linear):
                 self.weights.append(layer.weight)
     
+    # Define initialization function 
     def initialize(self, initialize_func):
         for k, layer in enumerate(self.layer_order):
             if k % 2 == 0:
@@ -82,26 +76,18 @@ class deepNN(nn.Module):
               if layer.bias is not None:
                 torch.nn.init.zeros_(layer.bias)
 
+    # Define forward function
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x)
 
-def NNet_test():
-    nnet = deepNN(3, 3, [3,30])
-    nnet.initialize(torch.nn.init.zeros_)
-
+## Test for the deep neural network
+def deepNN_test():
+    deepNNet = deepNN(3, 3, [3,30])
+    deepNNet.initialize(torch.nn.init.zeros_)
     x = torch.Tensor([[1,2,3],[4,5,6],[7,8,9]])
-    # print("Weights of each layer:")
-    # for layer in nnet.layer_order:
-    #     if isinstance(layer, nn.Linear):
-    #         print(layer.weight)
+    print(deepNNet(x))
 
-    # print("Output after forward pass:")
-    print(nnet(x))
-
-# TESTING CLASS
 if __name__ == "__main__":
-
-    # NNet definition test
-    NNet_test()
+    deepNN_test()
 
     
