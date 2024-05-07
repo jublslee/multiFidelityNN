@@ -6,7 +6,7 @@ from deepNN import *
 #### MLP ####
 ## network with low-fidelity, linear & non-linear high-fidelity architecture
 ## network (Karniadakis paper)
-class MLP(nn.Module):
+class MFNNet(nn.Module):
     ### init: initialize ####
     ## @param lf_list 
     ##        List of low-fidelity (LF) models
@@ -23,9 +23,8 @@ class MLP(nn.Module):
                  nl_nn_size: set):
         super().__init__()
 
-        lf_num = len(lf_list)
-
-        # Low-fidelity surrogates
+        # Set up for multi-fidelity network (LF part)
+        lf_num = len(lf_list) # get number of LF models
         self.lf_models = nn.ModuleList()
         sum_lf_out_dim = 0
         for lf_i in range(lf_num):
@@ -35,18 +34,17 @@ class MLP(nn.Module):
                                        )
             sum_lf_out_dim += lf_list[lf_i].out_dim
 
-        # High-fidelity correlation network
-        # Linear correlation subnetwork
-        # Linear neural network (no hidden layers, no activation functions)
+        # Set up for multi-fidelity network (HF part)
+        # HF with linear correlation
         self.hf_l = nn.Linear(hf.in_dim + sum_lf_out_dim,
                               hf.out_dim)
-        # Non-linear correlation subnetwork
+        # HF with non-linear correlation subnetwork
         self.hf_nl = deepNN(hf.in_dim + sum_lf_out_dim,
                           hf.out_dim,
                           [nl_nn_size['num_hidden_layers'], nl_nn_size['num_neurons']],
                           add_bias=False)
 
-        # Apply Xavier uniform initialization to all networks
+        # Apply Xavier uniform initialization every network
         for lf_model in self.lf_models:
             lf_model.initialize(torch.nn.init.xavier_uniform_)
         nn.init.xavier_uniform_(self.hf_l.weight)
@@ -55,26 +53,26 @@ class MLP(nn.Module):
         # self.lf_weight = 
         # self.lf_bias = 
 
-    def get_lf_weights_biases(self):
+    # def get_lf_weights_biases(self):
         # lf_weights_biases = []
-        for lf_model in self.lf_models:
-            self.lf_weights_biases.append((lf_model.weight, lf_model.bias))
+        # for lf_model in self.lf_models:
+        #     self.lf_weights_biases.append((lf_model.weight, lf_model.bias))
         # return lf_weights_biases
 
     # def get_hf_weights_biases(self):
     #     hf_weights_biases = [(self.hf_l.weight, self.hf_l.bias), (self.hf_nl.weight, self.hf_nl.bias)]
     #     return hf_weights_biases
     
+
+    ### eval: converts model to evaluation mode ####
     def eval(self):
-        """
-        Sets all models to evaluation mode.
-        """
-        # for lf in self.lfs:
         for lf in self.lf_models:
             lf.eval()
         self.hf_l.eval()
         self.hf_nl.eval()
 
+    ### hf_prediction: prediction of the entire MF network ####
+    ## also the forward function
     def hf_prediction(self, x):
         num_lf_models = len(self.lf_models)
 
@@ -85,7 +83,8 @@ class MLP(nn.Module):
         
         return hf_l_pred + hf_nl_pred
 
-def test_MLP():
+# test neural network
+def test_MFNN():
     from exCases import HF_MK1, LF_MK1
 
     # Define models for LF
@@ -99,7 +98,7 @@ def test_MLP():
         'num_neurons': 25,
     }
 
-    mfnn = MLP(lf_list, HF_MK1(), lf_nn_sizes, nl_nn_size)
+    mfnn = MFNNet(lf_list, HF_MK1(), lf_nn_sizes, nl_nn_size)
 
     x = torch.Tensor([[3],[4],[5]])
     
@@ -107,5 +106,5 @@ def test_MLP():
 
 # TESTING CLASS
 if __name__ == "__main__":
-    test_MLP()
+    test_MFNN()
     

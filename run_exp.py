@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler, Subset
 import torch.optim as optim
 from torch.utils.data import TensorDataset
 from deepNN import *
-from MLP import *
+from MFNNet import *
 from exCases import *
 
 # Seed the random number generator for all devices (both CPU and CUDA)
@@ -68,7 +68,7 @@ nl_nn_size = {
     'num_neurons': 20,
 }
 
-mlp = MLP(lf_list, HF_Problem(), lf_nn_sizes, nl_nn_size)
+mfnn = MFNNet(lf_list, HF_Problem(), lf_nn_sizes, nl_nn_size)
 
 # Generate data
 data = torch.linspace(0.0, 1.0, 100).unsqueeze(1)  
@@ -116,19 +116,19 @@ training_loss = []
 
 # Start training
 for epoch in range(epochs):
-    mlp.train()
+    mfnn.train()
     print(f"epoch:{epoch}")
 
     # Iterate batches in dataloader
     beta = 0
     for batchL, batchH in zip(train_loader_L, train_loader_H):
         x_L, y_star_L = batchL
-        y_L = mlp.lf_models[0](x_L)
+        y_L = mfnn.lf_models[0](x_L)
 
         x_H, y_star_H = batchH
-        y_H = mlp.hf_prediction(x_H)
+        y_H = mfnn.hf_prediction(x_H)
 
-        beta = [param for param in mlp.parameters() if param.requires_grad]
+        beta = [param for param in mfnn.parameters() if param.requires_grad]
 
         # Lambda is the regularization strength
         lambda_reg = 0.01
@@ -138,7 +138,7 @@ for epoch in range(epochs):
 
         criterion = torch.nn.CrossEntropyLoss()
         # optimizer = optim.SGD(mfnn.parameters(), lr=learning_rate, momentum=0.9)
-        optimizer = optim.Adam(mlp.parameters(), lr=learning_rate)
+        optimizer = optim.Adam(mfnn.parameters(), lr=learning_rate)
         loss_L = MSE(y_L,y_star_L) # Calculate cost
         loss_H = MSE(y_H,y_star_H) # Calculate cost
         # total_loss = (loss_L + loss_H)
@@ -158,26 +158,26 @@ for epoch in range(epochs):
             print("Loss:", total_loss.item())
 
     # Evaluate the model
-    acc = evaluate(mlp, val_loader_L, val_loader_H)
+    acc = evaluate(mfnn, val_loader_L, val_loader_H)
     # Save the current weights if the accuracy is better in this iteration
     if acc > acc_best and save:
-        torch.save(mlp.hf_l.weight, save + "_hf_1_W")
-        torch.save(mlp.hf_nl.weights, save + "_hf_n1_W")
+        torch.save(mfnn.hf_l.weight, save + "_hf_1_W")
+        torch.save(mfnn.hf_nl.weights, save + "_hf_n1_W")
         # torch.save(mfnn.lf_models[1].weights, save + "_lf_W")
         for lf_i in range(len(lf_list)):
-            if isinstance(mlp.lf_models[lf_i], nn.Linear):
-                torch.save(mlp.lf_models[lf_i].weight, save + "_lf_" + str(lf_i) + "_W")
+            if isinstance(mfnn.lf_models[lf_i], nn.Linear):
+                torch.save(mfnn.lf_models[lf_i].weight, save + "_lf_" + str(lf_i) + "_W")
             else:
-                torch.save(mlp.lf_models[lf_i].weights, save + "_lf_" + str(lf_i) + "_W")
+                torch.save(mfnn.lf_models[lf_i].weights, save + "_lf_" + str(lf_i) + "_W")
         acc_best = acc
     print(f"Epoch: #{epoch+1}: validation accuracy = {acc*100:.2f}%; training loss = {torch.mean(torch.tensor(training_loss))}")
 
 # load the model’s weights
-mlp.hf_l.weight = torch.load(save + "_hf_1_W")
-mlp.hf_nl.weights = torch.load(save + "_hf_n1_W")
+mfnn.hf_l.weight = torch.load(save + "_hf_1_W")
+mfnn.hf_nl.weights = torch.load(save + "_hf_n1_W")
 for lf_i in range(len(lf_list)):
-    mlp.lf_models[lf_i].weight = torch.load(save + "_lf_" + str(lf_i) + "_W")
-acc = evaluate(mlp, test_loader_L, test_loader_H)
+    mfnn.lf_models[lf_i].weight = torch.load(save + "_lf_" + str(lf_i) + "_W")
+acc = evaluate(mfnn, test_loader_L, test_loader_H)
 print(f"Test accuracy = {acc}")
 
 x  = torch.linspace(0.0,1.0,100)
@@ -188,7 +188,7 @@ lf = LF_Problem().eval(x)
 plt.plot(x.numpy(),hf.numpy(),label='High-Fidelity')
 plt.plot(x.numpy(),lf.numpy(),label='Low-Fidelity')
 # predVals = mfnn.lf_models[0](data)
-predVals = mlp.hf_prediction(data)
+predVals = mfnn.hf_prediction(data)
 plt.plot(x.numpy(),predVals.detach().numpy(),label='Multi-Fidelity Prediction')
 plt.legend()
 plt.show()
